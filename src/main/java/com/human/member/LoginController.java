@@ -24,13 +24,12 @@ public class LoginController {
 		HttpSession session = req.getSession();
 		if(session.getAttribute("userid") == null) {
 			model.addAttribute("userinfo","");
-//			model.addAttribute("statusLine","<a href='login'>로그인</a>&nbsp<a href='signin'>회원가입</a>");
-//			model.addAttribute("newbutton", "<input type=button value='새글 쓰기' disabled>");
 		} else {
 			model.addAttribute("userinfo",session.getAttribute("userid"));
-//			model.addAttribute("statusLine",session.getAttribute("userid")+"&nbsp<a href='logout'>로그아웃</a>");
-//			model.addAttribute("newbutton","<input type=button value='새글 쓰기'>");
 		}
+		iPost post = sqlSession.getMapper(iPost.class);
+		ArrayList<boardDTO> postList = post.listPost();
+		model.addAttribute("plist",postList);
 		return "home";
 	}
 	
@@ -40,18 +39,19 @@ public class LoginController {
 		return "login";
 	}
 	
-	@RequestMapping("/user_check")
+	@RequestMapping(value="/user_check", method = RequestMethod.POST)
 	public String doUserCheck(HttpServletRequest req, Model model) {
+		iMember member = sqlSession.getMapper(iMember.class);
 		String user_id = req.getParameter("userid");
 		String password = req.getParameter("pwd");
-		model.addAttribute("user_id",user_id);
-		model.addAttribute("password",password);
-		HttpSession session = req.getSession();
-		if(user_id.equals(session.getAttribute("newuser_id")) 
-				&& password.equals(session.getAttribute("newuser_pwd"))) {
+		int cnt = member.checkUser(user_id, password);
+		if(cnt!=0) {
+			HttpSession session = req.getSession();
 			session.setAttribute("userid", user_id);
+			return "redirect:/";
+		} else {
+			return "login";
 		}
-		return "redirect:/";
 	}
 	
 	@RequestMapping("/signin")
@@ -59,13 +59,14 @@ public class LoginController {
 		return "signin";
 	}
 	
-	@RequestMapping("/user_signin")
+	@RequestMapping(value="/user_signin", method = RequestMethod.POST)
 	public String doSigninCheck(HttpServletRequest req) {
+		iMember member = sqlSession.getMapper(iMember.class);
 		String uid = req.getParameter("userid");
 		String pwd = req.getParameter("pwd");
-		HttpSession session = req.getSession();
-		session.setAttribute("newuser_id", uid);
-		session.setAttribute("newuser_pwd", pwd);
+		String name = req.getParameter("name");
+		String mobile = req.getParameter("mobile");
+		member.insert(uid, pwd, name, mobile);
 		return "login";
 	}
 	
@@ -77,7 +78,7 @@ public class LoginController {
 	}
 	
 	@RequestMapping("/newpost")
-	public String doNewPost() {
+	public String doNewPost(HttpServletRequest req) {
 		return "newpost";
 	}
 	
@@ -98,6 +99,22 @@ public class LoginController {
 		return "redirect:/addnew";
 	}
 	
-
+	@RequestMapping(value = "/addPost", method = RequestMethod.POST)
+	public String doAddPost(HttpServletRequest req) {
+		String title = req.getParameter("title");
+		String content = req.getParameter("content");
+		HttpSession session = req.getSession();
+		String writer = (String) session.getAttribute("userid");
+		iPost post = sqlSession.getMapper(iPost.class);
+		post.addPost(title, content, writer);
+		return "redirect:/";
+	}
 	
+	@RequestMapping("/post")
+	public String doPost(int seqbbs, Model model) {
+		iPost post = sqlSession.getMapper(iPost.class);
+		boardDTO bDto = post.viewPost(seqbbs);
+		model.addAttribute("post",bDto);
+		return "postdetail";
+	}
 }

@@ -50,5 +50,4 @@ public class tmemberDTO {
 	public void setJoindate(String joindate) {
 		this.joindate = joindate;
 	}
-	
 }
