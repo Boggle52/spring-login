@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.human.member.iReply">
+<insert id="addReply">
+	insert into reply values(seqreply.nextval, #{param1}, #{param2}, #{param3}, to_char(sysdate,'YYYY-MM-DD HH24:MI:SS'), '')
+</insert>
+<select id="listReply" resultType="com.human.member.replyDTO">
+	select * from reply where seqbbs=#{param}
+</select>
+</mapper>

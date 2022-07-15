@@ -12,7 +12,7 @@ td{border:1px solid blue}
 </style>
 <body>
 <form id=frmAddMember method=POST action="addMember">
-USER ID: <input type=text name=id><br>
+USER ID: <input type=text name=id id=id><br>
 Password: <input type=password name=pwd><br>
 Password 확인: <input type=password name=pwd2><br>
 이름: <input type=text name=name><br>

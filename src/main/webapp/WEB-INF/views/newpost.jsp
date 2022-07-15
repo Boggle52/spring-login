@@ -12,7 +12,7 @@
 내용: 
 <br><textarea id=content name=content rows=10 cols=70></textarea><br>
 <input type=submit value='작성 완료'>&nbsp;
-<input type=button value='목록으로 돌아가기' id=btnList>
+<input type=button value='취소' id=btnList>
 </form>
 </body>
 <script src="https://code.jquery.com/jquery-3.4.1.js"></script>

@@ -15,26 +15,41 @@
 	<%-- <p>${statusLine }</p>
 	<p>${newbutton }</p> --%>
 	
-	<c:if test="${userinfo=='' }">
+	<c:if test="${username=='' }">
 		<p align=right><a href='login'>Login</a>&nbsp;<a href='signin'>SignUp</a>
 	</c:if>
-	<c:if test="${userinfo!='' }">
-		<p align=right>${userinfo }&nbsp;<a href='logout'>Logout</a>
+	<c:if test="${username!='' }">
+		<p align=right>${username }&nbsp;<a href='logout'>Logout</a>
 	</c:if>
 	<h1>Hello World</h1>
-	
  	<table align=center>
-		<tr><th>작성 시각</th><th>제목</th><th>작성자</th></tr>
+		<tr><th>번호</th><th>제목</th><th>작성자</th><th>작성일자</th><th>작업</th></tr>
 		<c:forEach var="p" items="${plist }">
-			<tr><td>${p.created }</td><td><a href='post?seqbbs=${p.seqbbs }'>${p.title }</a></td>
-				<td>${p.writer }</td>
+			<tr><td>${p.seqbbs }</td><td><a href='post?seqbbs=${p.seqbbs }'>${p.title }</a></td>
+				<td>${p.writer }</td><td>${p.created }</td>
+				<c:if test="${username!=p.writer }">
+					<td></td>
+				</c:if>
+				<c:if test="${username==p.writer }">
+					<td><a id=a_update href="updatePost?seqbbs=${p.seqbbs }">수정</a>&nbsp;
+						<a id=a_del href="deletePost?seqbbs=${p.seqbbs }">삭제</a>
+				</c:if>
 			</tr>
 		</c:forEach>
 	</table>
 	<br>
-	
-	<c:if test="${userinfo!='' }">
+	<c:if test="${username!='' }">
 		<a href='newpost'>글쓰기</a>
 	</c:if>
 </body>
+<script src = "https://code.jquery.com/jquery-3.4.1.js"></script>
+<script>
+$(document)
+.on('click','a',function(){
+	if(this.id=='a_del'){
+		if(!confirm('정말로 삭제하시겠습니까?')) return false;
+	}
+	return true;
+})
+</script>
 </html>

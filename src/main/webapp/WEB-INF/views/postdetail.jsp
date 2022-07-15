@@ -1,9 +1,11 @@
-<%@ page language="java" contentType="text/html; charset=EUC-KR"
-    pageEncoding="EUC-KR"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ page session="false" %>   
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="EUC-KR">
+<meta charset="UTF-8">
 <title>Insert title here</title>
 </head>
 <style>
@@ -11,13 +13,73 @@
 	th, td {border:1px solid black}
 </style>
 <body>
-	<input type=hidden value=${post.seqbbs }>
+	<p align=right><a href='/member'>Home</a>
 	<table>
-		<tr><th>ÀÛ¼º ½Ã°¢</th><td>${post.created }</td></tr>
-		<tr><th>Á¦¸ñ</th><td>${post.title }</td></tr>
-		<tr><th>ÀÛ¼ºÀÚ</th><td>${post.writer }</td></tr>
-		<tr><th>³»¿ë</th><td>${post.content }</td></tr>
+		<tr><th>ì‘ì„± ì‹œê°</th><td>${post.created }</td></tr>
+		<tr><th>ì œëª©</th><td>${post.title }</td></tr>
+		<tr><th>ì‘ì„±ì</th><td>${post.writer }</td></tr>
+		<tr><th>ë‚´ìš©</th><td>${post.content }</td></tr>
+	</table><br>
+	<c:if test="${username!='' }">
+		ëŒ“ê¸€<br>
+		<form id=frmNewReply method=post action="addReply">
+			<input type=hidden value=${post.seqbbs } id='btnSeqbbs' name=seqbbs>
+			<textarea name=content rows=2 cols=70></textarea>
+		<br><input type=submit value='ì‘ì„± ì™„ë£Œ'>
+		</form>
+	</c:if>
+	<br>
+	<table id=replyTable style="width:600px">
+		<%-- <c:forEach var="r" items="${rlist }" varStatus="status">
+			<tr><td>${r.writer }</td><td>${r.content }</td><td>${r.replydate }</td> --%>
+			<c:if test="${username!='' }">	
+				<td style='width:50px'><a href=# id=re>ë‹µê¸€</a></td>
+			</c:if>	
+		<%-- </tr>
+			<tr style='display:none'><td colspan=3>ë‹µê¸€:<br><textarea name=content id=content rows=2 cols=70></textarea></td><td><a href=# id=add>ì‘ì„±</a></td></tr>
+		</c:forEach> --%>
 	</table>
-	<a href='newpost?seqno=${post.seqbbs }'>¼öÁ¤</a>&nbsp;<a href='delete?seqno=${post.seqbbs }'>»èÁ¦</a>
 </body>
+<script src="https://code.jquery.com/jquery-3.4.1.js"></script>
+<script>
+$(document)
+.ready(function(){
+	listReply()
+})
+.on('click','#re',function(){
+	if($(this).closest('tr').next().attr('style')=='display:none'){
+		$(this).closest('tr').next().attr('style','display:""')
+	} else{
+		$(this).closest('tr').next().attr('style','display:none')
+	}
+})
+.on('click','#add',function(){
+	$.ajax({
+		url:'addReply',type:'post',dataType:'text',
+		data:{content:$('#content').val()},
+		success:function(data){
+			listReply()
+			$(this).closest('tr').attr('style','display:none')
+		}
+	})
+})
+
+function listReply(){
+/* 	$('#replyTable').remove() */
+ 	let seqbbs = $("#btnSeqbbs").val()
+ 	console.log(seqbbs)
+	$.ajax({
+		url:'listReply',data:'seqbbs='+seqbbs,dataType:'json',type:'get',
+		success:function(data){
+			replyitem = data[i]
+			let str = '<tr><td>'+replyitem['writer']+'</td><td>'+replyitem['content']+'</td>'
+				+'<td>'+replyitem['replydate']+'</td></tr>'
+				+'<tr style="display:none"><td colspan=3>ë‹µê¸€:<br>'
+				+'<textarea name=content id=content rows=2 cols=70></textarea></td>'
+				+'<td><a href=# id=add>ì‘ì„±</a></td></tr>'
+			$('#replyTable').append(str)
+		}
+	})
+}
+</script>
 </html>

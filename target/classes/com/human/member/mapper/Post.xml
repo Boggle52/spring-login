@@ -4,12 +4,18 @@
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.human.member.iPost">
 <insert id="addPost">
-	insert into board values(sqboard.nextval, #{param1}, #{param2}, #{param3}, to_char(sysdate,'YYYY-MM-DD HH:MI:SS'))
+	insert into board values(sqboard.nextval, #{param1}, #{param2}, #{param3}, to_char(sysdate,'YYYY-MM-DD HH24:MI:SS'))
 </insert>
 <select id="listPost" resultType="com.human.member.boardDTO">
-	select created, title, writer, seqbbs from board
+	select created, title, writer, seqbbs from board order by seqbbs
 </select>
 <select id="viewPost" resultType="com.human.member.boardDTO">
 	select created, title, content, writer, seqbbs from board where seqbbs=#{param}
 </select>
+<update id="updatePost">
+	update board set title=#{param1}, content=#{param2} where seqbbs=#{param3}
+</update>
+<delete id="deletePost">
+	delete from board where seqbbs=#{param}
+</delete>
 </mapper>

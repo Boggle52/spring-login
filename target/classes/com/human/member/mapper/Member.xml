@@ -12,4 +12,13 @@
 <select id="checkUser" resultType="int">
 	select count(*) cnt from t_member where id=#{param1} and pwd=#{param2}
 </select>
+<select id="name" resultType="string">
+	select name from t_member where id=#{param}
+</select>
+<select id="checkId" resultType="int">
+	select count(*) from t_member where id=#{param}
+</select>
+<select id="checkName" resultType="int">
+	select count(*) from t_member where name=#{param}
+</select>
 </mapper>
